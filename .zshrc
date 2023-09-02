@@ -37,6 +37,7 @@ alias lint="nr lint"
 alias lintf="nr lint --fix"
 alias release="nr release"
 alias re="nr release"
+alias up="taze latest -r -w"
 
 # -------------------------------- #
 # Git
