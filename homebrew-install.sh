@@ -28,6 +28,7 @@ brew install --cask \
   clion \
   datagrip \
   docker \
+  espanso \
   feishu \
   figma \
   goland \
