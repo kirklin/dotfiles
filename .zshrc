@@ -1,19 +1,49 @@
+# -------------------------------- #
+# Homebrew Configuration
+# -------------------------------- #
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
+export HOMEBREW_API_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/api"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/bottles"
+
+# -------------------------------- #
+# Node Version Manager (NVM)
+# -------------------------------- #
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # Load nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # Load nvm bash_completion
+
+# -------------------------------- #
+# Starship Prompt
+# -------------------------------- #
+eval "$(starship init zsh)"
+
+# -------------------------------- #
+# Oh-My-Zsh Theme and Plugins
+# -------------------------------- #
+
 # git clone https://github.com/denysdovhan/spaceship-prompt.git "$ZSH_CUSTOM/themes/spaceship-prompt" --depth=1
 # ln -s "$ZSH_CUSTOM/themes/spaceship-prompt/spaceship.zsh-theme" "$ZSH_CUSTOM/themes/spaceship.zsh-theme"
 ZSH_THEME="spaceship"
+
 # git clone https://github.com/agnoster/agnoster-zsh-theme.git "$ZSH_CUSTOM/themes/agnoster-zsh-theme" --depth=1
 # ZSH_THEME="agnoster"
 
+# -------------------------------- #
+# Plugins
+# -------------------------------- #
 # git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 # git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+# git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
 # git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
 plugins=(
   git
   zsh-autosuggestions
+  zsh-completions
   zsh-syntax-highlighting
   zsh-z
 )
 
+# Load Oh My Zsh
 # https://ohmyz.sh/
 source $ZSH/oh-my-zsh.sh
 
@@ -40,7 +70,7 @@ alias re="nr release"
 alias up="taze latest -r -w"
 
 # -------------------------------- #
-# Git
+# Git Aliases
 # -------------------------------- #
 
 # Use github/hub
@@ -93,10 +123,12 @@ alias gsha='git rev-parse HEAD | pbcopy'
 
 alias ghci='gh run list -L 1'
 
+# Git log pretty function
 function glp() {
   git --no-pager log -$1
 }
 
+# Git diff function with diff-so-fancy
 function gd() {
   if [[ -z $1 ]] then
     git diff --color | diff-so-fancy
@@ -111,27 +143,6 @@ function gdc() {
   else
     git diff --color --cached $1 | diff-so-fancy
   fi
-}
-
-# -------------------------------- #
-# Directories
-#
-# I put
-# `~/i` for my projects
-# `~/f` for forks
-# `~/r` for reproductions
-# -------------------------------- #
-
-function i() {
-  cd ~/i/$1
-}
-
-function repros() {
-  cd ~/r/$1
-}
-
-function forks() {
-  cd ~/f/$1
 }
 
 function pr() {
@@ -154,23 +165,50 @@ function clone() {
   fi
 }
 
-# Clone to ~/i and cd to it
-function clonei() {
-  i && clone "$@" && code . && cd ~2
+# -------------------------------- #
+# Directory Navigation Functions
+# -------------------------------- #
+
+# Navigate to specific project directory under Code
+function pj() {
+  cd ~/Code/projects/$1
 }
 
-function cloner() {
-  repros && clone "$@" && code . && cd ~2
+# Navigate to specific fork directory under Code
+function fk() {
+  cd ~/Code/forks/$1
 }
 
-function clonef() {
-  forks && clone "$@" && code . && cd ~2
+# Navigate to specific reproduction directory under Code
+function rp() {
+  cd ~/Code/repros/$1
 }
 
-function codei() {
-  i && code "$@" && cd -
+# Clone a repo to 'projects' and navigate into it using WebStorm
+function cpj() {
+  pj && clone "$@" && webstorm . && cd ~2
 }
 
+# Clone a repo to 'forks' and navigate into it using WebStorm
+function cfk() {
+  fk && clone "$@" && webstorm . && cd ~2
+}
+
+# Clone a repo to 'reproductions' and navigate into it using WebStorm
+function crp() {
+  rp && clone "$@" && webstorm . && cd ~2
+}
+
+# -------------------------------- #
+# Utility Functions
+# -------------------------------- #
+
+# Create a directory and move into it
+function mkcd() {
+  mkdir $1 && cd $1
+}
+
+# Use live server to serve a directory
 function serve() {
   if [[ -z $1 ]] then
     live-server dist
