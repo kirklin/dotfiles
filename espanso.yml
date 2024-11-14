@@ -10,7 +10,7 @@
 matches:
   # Personal Information
   - trigger: ";phone"
-    replace: 
+    replace:
 
   - trigger: ";mail"
     replace:

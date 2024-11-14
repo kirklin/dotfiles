@@ -35,10 +35,14 @@ brew install --cask \
   google-chrome \
   github \
   intellij-idea \
+  macdroid \
+  motrix \
   microsoft-edge \
   microsoft-remote-desktop \
   obs \
   obsidian \
+  ollama \
+  pycharm \
   raycast \
   rustrover \
   sourcetree \
@@ -46,9 +50,10 @@ brew install --cask \
   tencent-lemon \
   visual-studio-code \
   webstorm \
+  warp \
   wechat \
   wechatwebdevtools \
-  warp
+  wireshark
 
 # Install CLI tools
 brew install \
@@ -58,6 +63,7 @@ brew install \
   fd \
   ffmpeg \
   fzf \
+  go \
   gh \
   git \
   hub \
