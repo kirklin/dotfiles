@@ -34,6 +34,7 @@ brew install --cask \
   goland \
   google-chrome \
   github \
+  git-credential-manager \
   intellij-idea \
   macdroid \
   motrix \
