@@ -73,4 +73,5 @@ brew install \
   pnpm \
   tldr \
   tree \
-  wget
+  wget \
+  java

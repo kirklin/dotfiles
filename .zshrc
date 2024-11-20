@@ -6,6 +6,22 @@ export HOMEBREW_API_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/api"
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/bottles"
 
 # -------------------------------- #
+# Java Environment
+# -------------------------------- #
+# Add Homebrew installed OpenJDK to path
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+# -------------------------------- #
+# Go (Golang) Development Environment
+# -------------------------------- #
+# Setup GOPATH and GOROOT
+export GOHOME="/opt/homebrew/Cellar/go"
+
+# -------------------------------- #
+# Python Development Environment
+# -------------------------------- #
+
+# -------------------------------- #
 # Node Version Manager (NVM)
 # -------------------------------- #
 export NVM_DIR="$HOME/.nvm"
@@ -227,3 +243,14 @@ function p() {
   export all_proxy=socks5://127.0.0.1:7890
   echo "Proxy enabled: http://127.0.0.1:7890"
 }
+
+# Function to disable the proxy manually
+function dp() {
+  unset https_proxy
+  unset http_proxy
+  unset all_proxy
+  echo "Proxy disabled"
+}
+
+# Enable Proxy at terminal start
+p
