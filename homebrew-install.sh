@@ -44,6 +44,7 @@ brew install --cask \
   obsidian \
   ollama \
   pycharm \
+  postman \
   raycast \
   rustrover \
   sourcetree \
