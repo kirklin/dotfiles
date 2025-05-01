@@ -23,37 +23,45 @@ brew update
 
 # Install GUI applications
 brew install --cask \
+  adobe-creative-cloud \
+  adobe-creative-cloud-cleaner-tool \
+  adrive \
+  android-platform-tools \
+  android-studio \
+  baidunetdisk \
   battle-net \
   bob \
+  claude \
   clion \
+  cursor \
   datagrip \
-  docker \
-  espanso \
   feishu \
   figma \
-  goland \
-  google-chrome \
-  github \
+  flutter \
   git-credential-manager \
+  github \
+  google-chrome \
+  gstreamer-runtime \
+  hbuilderx \
+  iina \
   intellij-idea \
-  macdroid \
   motrix \
-  microsoft-edge \
-  microsoft-remote-desktop \
   obs \
   obsidian \
   ollama \
-  pycharm \
+  orbstack \
   postman \
+  pycharm \
+  raspberry-pi-imager \
   raycast \
   rustrover \
   sourcetree \
-  sogouinput \
+  steam \
   tencent-lemon \
   visual-studio-code \
-  webstorm \
+  vmware-fusion \
   warp \
-  wechat \
+  webstorm \
   wechatwebdevtools \
   wireshark
 
@@ -68,11 +76,10 @@ brew install \
   go \
   gh \
   git \
-  hub \
   mkcert \
   nvm \
+  openjdk \
   pnpm \
   tldr \
   tree \
-  wget \
-  java
+  wget
