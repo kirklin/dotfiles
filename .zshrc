@@ -325,3 +325,6 @@ launchctl setenv OLLAMA_ORIGINS "*"
 ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_VMOPTIONS_SHELL_FILE}" ]; then . "${___MY_VMOPTIONS_SHELL_FILE}"; fi
 
 setopt no_nomatch
+
+# Disable Caps Lock delay
+hidutil property --set '{"CapsLockDelayOverride":0}'
