@@ -2,24 +2,57 @@
 
 # Homebrew Installation Script
 #
-# This script installs Homebrew and a list of applications.
-# It includes configurable options for using a proxy and a Chinese mirror.
+# This script installs Homebrew and, optionally, a list of CLI and GUI applications.
+# It supports flags for enabling a proxy and using a Chinese mirror for faster downloads.
 
-# --- Configuration ---
-# Set to "true" to enable the proxy for Homebrew commands.
+# --- Default Configuration ---
+INSTALL_CLI="false"
+INSTALL_GUI="false"
 USE_PROXY="false"
-# Set to "true" to use the Chinese mirror for Homebrew.
 USE_CN_MIRROR="false"
-# ---------------------
 
-# Apply Proxy Settings if enabled
-if [ "$USE_PROXY" = "true" ]; then
-  export https_proxy=http://127.0.0.1:7890
-  export http_proxy=http://127.0.0.1:7890
-  export all_proxy=socks5://127.0.0.1:7890
-  echo "Proxy enabled for this session."
+# --- Help Function ---
+usage() {
+  echo "Usage: $0 [options]"
+  echo
+  echo "Options:"
+  echo "  -c, --cli          Install command-line interface (CLI) tools."
+  echo "  -g, --gui          Install graphical user interface (GUI) applications (casks)."
+  echo "  -p, --proxy        Enable proxy (http://127.0.0.1:7890) for the session."
+  echo "  -m, --mirror       Use Chinese mirror (USTC) for Homebrew."
+  echo "  -h, --help         Display this help message."
+  echo
+  echo "Example: To install both CLI and GUI apps using the Chinese mirror:"
+  echo "  $0 --cli --gui --mirror"
+  exit 1
+}
+
+# --- Argument Parsing ---
+if [ "$#" -eq 0 ]; then
+    usage
 fi
 
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    -c|--cli) INSTALL_CLI="true"; shift ;;
+    -g|--gui) INSTALL_GUI="true"; shift ;;
+    -p|--proxy) USE_PROXY="true"; shift ;;
+    -m|--mirror) USE_CN_MIRROR="true"; shift ;;
+    -h|--help) usage ;;
+    *) echo "Unknown parameter passed: $1"; usage ;;
+  esac
+done
+
+
+# --- Pre-flight Checks ---
+# Check for Xcode Command Line Tools
+if ! xcode-select -p &> /dev/null; then
+  echo "Xcode Command Line Tools are not installed. Please run 'xcode-select --install' and then re-run this script."
+  exit 1
+fi
+
+
+# --- Execution ---
 # Apply Chinese Mirror Settings if enabled
 if [ "$USE_CN_MIRROR" = "true" ]; then
   export HOMEBREW_INSTALL_FROM_API=1
@@ -30,11 +63,14 @@ if [ "$USE_CN_MIRROR" = "true" ]; then
   echo "Using Chinese mirror for Homebrew."
 fi
 
-# Check for Xcode Command Line Tools
-if ! xcode-select -p &> /dev/null; then
-  echo "Xcode Command Line Tools are not installed. Please run 'xcode-select --install' and then re-run this script."
-  exit 1
+# Apply Proxy Settings if enabled
+if [ "$USE_PROXY" = "true" ]; then
+  export https_proxy=http://127.0.0.1:7890
+  export http_proxy=http://127.0.0.1:7890
+  export all_proxy=socks5://127.0.0.1:7890
+  echo "Proxy enabled for this session."
 fi
+
 
 # Install Homebrew if not already installed
 if ! command -v brew &> /dev/null
@@ -48,64 +84,72 @@ fi
 # Update Homebrew
 brew update
 
-# Install GUI applications
-brew install --cask \
-  adobe-creative-cloud \
-  adobe-creative-cloud-cleaner-tool \
-  adrive \
-  android-platform-tools \
-  android-studio \
-  baidunetdisk \
-  battle-net \
-  bob \
-  claude \
-  clion \
-  cursor \
-  datagrip \
-  feishu \
-  figma \
-  flutter \
-  git-credential-manager \
-  github \
-  google-chrome \
-  goland \
-  gstreamer-runtime \
-  iina \
-  intellij-idea \
-  motrix \
-  obs \
-  obsidian \
-  ollama \
-  orbstack \
-  postman \
-  pycharm \
-  raspberry-pi-imager \
-  raycast \
-  rustrover \
-  sourcetree \
-  steam \
-  tencent-lemon \
-  visual-studio-code \
-  warp \
-  webstorm \
-  wechatwebdevtools \
-  wireshark
+# Install CLI tools if requested
+if [ "$INSTALL_CLI" = "true" ]; then
+  echo "Installing CLI tools..."
+  brew install \
+    autojump \
+    bat \
+    diff-so-fancy \
+    fd \
+    ffmpeg \
+    fzf \
+    go \
+    gh \
+    git \
+    mkcert \
+    nvm \
+    openjdk \
+    pnpm \
+    tldr \
+    tree \
+    wget
+fi
 
-# Install CLI tools
-brew install \
-  autojump \
-  bat \
-  diff-so-fancy \
-  fd \
-  ffmpeg \
-  fzf \
-  go \
-  gh \
-  git \
-  mkcert \
-  nvm \
-  openjdk \
-  pnpm \
-  tldr \
-  tree \
-  wget
+# Install GUI applications if requested
+if [ "$INSTALL_GUI" = "true" ]; then
+  echo "Installing GUI applications..."
+  brew install --cask \
+    adobe-creative-cloud \
+    adobe-creative-cloud-cleaner-tool \
+    adrive \
+    android-platform-tools \
+    android-studio \
+    baidunetdisk \
+    battle-net \
+    bob \
+    claude \
+    clion \
+    cursor \
+    datagrip \
+    feishu \
+    figma \
+    flutter \
+    git-credential-manager \
+    github \
+    google-chrome \
+    goland \
+    gstreamer-runtime \
+    iina \
+    intellij-idea \
+    motrix \
+    obs \
+    obsidian \
+    ollama \
+    orbstack \
+    postman \
+    pycharm \
+    raspberry-pi-imager \
+    raycast \
+    rustrover \
+    sourcetree \
+    steam \
+    tencent-lemon \
+    visual-studio-code \
+    warp \
+    webstorm \
+    wechatwebdevtools \
+    wireshark
+fi
+
+echo "Script finished."
