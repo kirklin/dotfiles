@@ -61,3 +61,44 @@ Configuration Files
 This README outlines the essential steps for setting up zsh, Oh My Zsh, and Starship, as well as installing useful plugins for an enhanced command-line experience.
 
 Feel free to copy and use this markdown content directly!
+
+
+---
+
+## Homebrew Installation Script
+
+This repository includes a script `homebrew-install.sh` to automate the installation of Homebrew and various applications.
+
+### Usage
+
+The script is controlled via command-line flags. Before running, ensure it has execution permissions:
+
+```bash
+chmod +x homebrew-install.sh
+```
+
+Then, run the script with the desired options:
+
+```bash
+./homebrew-install.sh [options]
+```
+
+**Options:**
+
+| Flag             | Description                                                   |
+| ---------------- | ------------------------------------------------------------- |
+| `-c`, `--cli`    | Install command-line interface (CLI) tools.                   |
+| `-g`, `--gui`    | Install graphical user interface (GUI) applications (casks).  |
+| `-p`, `--proxy`  | Enable proxy (`http://127.0.0.1:7890`) for the session.       |
+| `-m`, `--mirror` | Use Chinese mirror (USTC) for Homebrew for faster downloads.  |
+| `-h`, `--help`   | Display the help message.                                     |
+
+**Example:**
+
+To install both CLI tools and GUI applications using the Chinese mirror, run:
+
+```bash
+./homebrew-install.sh --cli --gui --mirror
+```
+
+**Note:** The script will check if Xcode Command Line Tools are installed. If not, it will prompt you to install them first by running `xcode-select --install`.
