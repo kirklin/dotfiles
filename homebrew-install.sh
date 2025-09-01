@@ -41,8 +41,8 @@ brew install --cask \
   git-credential-manager \
   github \
   google-chrome \
+  goland \
   gstreamer-runtime \
-  hbuilderx \
   iina \
   intellij-idea \
   motrix \
@@ -59,7 +59,6 @@ brew install --cask \
   steam \
   tencent-lemon \
   visual-studio-code \
-  vmware-fusion \
   warp \
   webstorm \
   wechatwebdevtools \
