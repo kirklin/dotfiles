@@ -30,6 +30,12 @@ if [ "$USE_CN_MIRROR" = "true" ]; then
   echo "Using Chinese mirror for Homebrew."
 fi
 
+# Check for Xcode Command Line Tools
+if ! xcode-select -p &> /dev/null; then
+  echo "Xcode Command Line Tools are not installed. Please run 'xcode-select --install' and then re-run this script."
+  exit 1
+fi
+
 # Install Homebrew if not already installed
 if ! command -v brew &> /dev/null
 then
