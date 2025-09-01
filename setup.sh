@@ -80,15 +80,7 @@ else
   echo "  -> zsh-z plugin already exists."
 fi
 
-# --- Step 5: Install Global NPM Packages ---
-echo "🌐 Installing global NPM packages..."
-# Source nvm to use it in this script
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-# Install the packages
-npm install -g @antfu/ni live-server
-
-# --- Step 6: Copy .zshrc Configuration ---
+# --- Step 5: Copy .zshrc Configuration ---
 ZSHRC_PATH="$HOME/.zshrc"
 ZSHRC_BACKUP_PATH="$HOME/.zshrc.pre-dotfiles.bak"
 
@@ -102,6 +94,22 @@ fi
 # Copy the .zshrc from the repository
 echo "  -> Copying repository's .zshrc to $ZSHRC_PATH"
 cp "$(pwd)/.zshrc" "$ZSHRC_PATH"
+
+# --- Step 6: Install Global NPM Packages ---
+echo "🌐 Installing global NPM packages..."
+# Source nvm to use it in this script
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+
+# Install the latest LTS version of Node.js and set it as the default
+echo "  -> Installing latest LTS Node.js version via nvm..."
+nvm install --lts
+echo "  -> Setting the LTS version as the default Node.js version..."
+nvm alias default lts/*
+
+# Install the packages
+echo "  -> Installing global npm packages..."
+npm install -g @antfu/ni live-server
 
 # --- Final Step ---
 echo ""
