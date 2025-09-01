@@ -109,7 +109,7 @@ nvm alias default lts/*
 
 # Install the packages
 echo "  -> Installing global npm packages..."
-npm install -g @antfu/ni live-server
+npm install -g @antfu/ni live-server pnpm taze
 
 # --- Final Step ---
 echo ""

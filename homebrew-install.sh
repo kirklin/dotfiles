@@ -100,7 +100,6 @@ if [ "$INSTALL_CLI" = "true" ]; then
     mkcert \
     nvm \
     openjdk \
-    pnpm \
     starship \
     tldr \
     tree \
