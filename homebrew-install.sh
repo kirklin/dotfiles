@@ -1,13 +1,34 @@
 #!/bin/bash
 
 # Homebrew Installation Script
-# This script sets up a proxy, installs Homebrew, and then installs a list of GUI applications and CLI tools using Homebrew.
+#
+# This script installs Homebrew and a list of applications.
+# It includes configurable options for using a proxy and a Chinese mirror.
 
-# Enable proxy before running Homebrew commands to enhance download speed
-# export https_proxy=http://127.0.0.1:7890
-# export http_proxy=http://127.0.0.1:7890
-# export all_proxy=socks5://127.0.0.1:7890
-# echo "Proxy enabled: http://127.0.0.1:7890"
+# --- Configuration ---
+# Set to "true" to enable the proxy for Homebrew commands.
+USE_PROXY="false"
+# Set to "true" to use the Chinese mirror for Homebrew.
+USE_CN_MIRROR="false"
+# ---------------------
+
+# Apply Proxy Settings if enabled
+if [ "$USE_PROXY" = "true" ]; then
+  export https_proxy=http://127.0.0.1:7890
+  export http_proxy=http://127.0.0.1:7890
+  export all_proxy=socks5://127.0.0.1:7890
+  echo "Proxy enabled for this session."
+fi
+
+# Apply Chinese Mirror Settings if enabled
+if [ "$USE_CN_MIRROR" = "true" ]; then
+  export HOMEBREW_INSTALL_FROM_API=1
+  export HOMEBREW_API_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/api"
+  export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
+  export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
+  export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.ustc.edu.cn/homebrew-core.git"
+  echo "Using Chinese mirror for Homebrew."
+fi
 
 # Install Homebrew if not already installed
 if ! command -v brew &> /dev/null
