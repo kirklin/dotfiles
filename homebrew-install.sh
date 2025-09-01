@@ -4,10 +4,10 @@
 # This script sets up a proxy, installs Homebrew, and then installs a list of GUI applications and CLI tools using Homebrew.
 
 # Enable proxy before running Homebrew commands to enhance download speed
-export https_proxy=http://127.0.0.1:7890
-export http_proxy=http://127.0.0.1:7890
-export all_proxy=socks5://127.0.0.1:7890
-echo "Proxy enabled: http://127.0.0.1:7890"
+# export https_proxy=http://127.0.0.1:7890
+# export http_proxy=http://127.0.0.1:7890
+# export all_proxy=socks5://127.0.0.1:7890
+# echo "Proxy enabled: http://127.0.0.1:7890"
 
 # Install Homebrew if not already installed
 if ! command -v brew &> /dev/null
