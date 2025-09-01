@@ -101,6 +101,7 @@ if [ "$INSTALL_CLI" = "true" ]; then
     nvm \
     openjdk \
     pnpm \
+    starship \
     tldr \
     tree \
     wget

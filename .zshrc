@@ -316,8 +316,6 @@ function dp() {
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
-# End of ~/.zshrc
-
 # -------------------------------- #
 # Ollama Configuration
 # -------------------------------- #
@@ -328,3 +326,5 @@ setopt no_nomatch
 
 # Disable Caps Lock delay
 hidutil property --set '{"CapsLockDelayOverride":0}'
+
+# End of ~/.zshrc
