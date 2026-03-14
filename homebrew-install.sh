@@ -90,19 +90,32 @@ if [ "$INSTALL_CLI" = "true" ]; then
   brew install \
     autojump \
     bat \
+    cmake \
+    coreutils \
     diff-so-fancy \
+    docker \
     fd \
     ffmpeg \
     fzf \
     go \
     gh \
     git \
+    helm \
+    hugo \
+    jq \
+    kubernetes-cli \
     mkcert \
     nvm \
     openjdk \
+    pnpm \
+    python@3.12 \
+    python@3.14 \
     starship \
     tldr \
+    tmux \
     tree \
+    uv \
+    watchman \
     wget
 fi
 
@@ -115,8 +128,11 @@ if [ "$INSTALL_GUI" = "true" ]; then
     adrive \
     android-platform-tools \
     android-studio \
+    antigravity \
     baidunetdisk \
     battle-net \
+    blackhole-16ch \
+    blackhole-64ch \
     bob \
     claude \
     clion \
@@ -138,6 +154,7 @@ if [ "$INSTALL_GUI" = "true" ]; then
     ollama \
     orbstack \
     postman \
+    proxyman \
     pycharm \
     raspberry-pi-imager \
     raycast \
@@ -146,6 +163,7 @@ if [ "$INSTALL_GUI" = "true" ]; then
     steam \
     tencent-lemon \
     visual-studio-code \
+    vmware-fusion \
     warp \
     webstorm \
     wechatwebdevtools \

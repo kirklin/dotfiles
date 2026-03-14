@@ -49,6 +49,14 @@ source $ZSH/oh-my-zsh.sh
 # Environment Variables / 环境变量配置
 # -------------------------------- #
 
+
+# -------------------------------- #
+# Android Environment
+# -------------------------------- #
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
 # -- Java Environment --
 # Add Homebrew installed OpenJDK to the PATH.
 # 将 Homebrew 安装的 OpenJDK 添加到 PATH 环境变量。
@@ -65,6 +73,12 @@ export GOPATH="$HOME/go"
 export PATH="$PATH:$GOPATH/bin"
 # GOROOT is usually managed automatically by Go, no need to set it manually.
 # GOROOT 通常由 Go 自动管理，无需手动设置。
+
+# -------------------------------- #
+# Python Development Environment
+# -------------------------------- #
+alias python="python3"
+export PATH="/opt/homebrew/opt/python@3.12/libexec/bin:$PATH"
 
 # -- Node Version Manager (NVM) --
 # Set the directory where NVM stores Node versions.
