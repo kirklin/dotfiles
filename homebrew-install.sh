@@ -189,7 +189,7 @@ if [ "$INSTALL_CLI" = "true" ]; then
     go            # Go 编程语言 / Go programming language
     nvm           # Node.js 版本管理器 / Node Version Manager
     openjdk       # Java 开发工具包 / Java Development Kit
-    pnpm          # 快速、节省磁盘空间的包管理器 / Fast, disk space efficient package manager
+    # pnpm          # 快速、节省磁盘空间的包管理器 / Fast, disk space efficient package manager
     python@3.12   # Python 3.12
     python@3.14   # Python 3.14 (Preview)
     uv            # 极速 Python 包管理器 / Extremely fast Python package installer
