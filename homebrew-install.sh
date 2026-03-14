@@ -175,20 +175,24 @@ if [ "$INSTALL_CLI" = "true" ]; then
     tldr          # 简化的 man 帮助页面 / Simplified tool pages
     tmux          # 终端复用器 / Terminal multiplexer
     tree          # 以树形显示目录结构 / Display directories as trees
+    mole          # 全能 macOS 维护工具 / All-in-one macOS toolkit
 
     # --- Search & Data Processing ---
     jq            # 轻量级命令行 JSON 处理器 / Lightweight command-line JSON processor
+    pandoc        # 通用文档转换器 / Universal document converter
     
     # --- Version Control ---
     diff-so-fancy # 提供更易读的 git diff 输出 / Good-lookin' diffs
     gh            # GitHub 官方 CLI / GitHub CLI
     git           # 分布式版本控制系统 / Distributed version control system
+    git-lfs       # Git 大文件存储 / Git Large File Storage
 
     # --- Development & Languages ---
     cmake         # 跨平台构建系统 / Cross-platform make
     go            # Go 编程语言 / Go programming language
     nvm           # Node.js 版本管理器 / Node Version Manager
     openjdk       # Java 开发工具包 / Java Development Kit
+    openjdk@17    # Java 17开发工具包 / Java Development Kit
     # pnpm          # 快速、节省磁盘空间的包管理器 / Fast, disk space efficient package manager
     python@3.12   # Python 3.12
     python@3.14   # Python 3.14 (Preview)
@@ -197,6 +201,7 @@ if [ "$INSTALL_CLI" = "true" ]; then
     
     # --- DevOps & Cloud ---
     docker        # 容器开发平台 CLI / Container development platform CLI
+    docker-completion # Docker 命令行补全 / Docker completion
     helm          # Kubernetes 包管理器 / Kubernetes package manager
     kubernetes-cli # Kubernetes 命令行工具 (kubectl) / Kubernetes command-line tool
     
