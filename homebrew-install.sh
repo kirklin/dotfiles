@@ -1,29 +1,102 @@
 #!/bin/bash
 
-# Homebrew Installation Script
-#
-# This script installs Homebrew and, optionally, a list of CLI and GUI applications.
-# It supports flags for enabling a proxy and using a Chinese mirror for faster downloads.
+# ==============================================================================
+# Dotfiles Homebrew Installation Script
+# This script installs Homebrew and a comprehensive list of macOS applications.
+# It supports flags for enabling a proxy, using a Chinese mirror, and installing
+# CLI, GUI apps, Nerd Fonts, and Mac App Store (MAS) apps.
+# ==============================================================================
 
 # --- Default Configuration ---
 INSTALL_CLI="false"
 INSTALL_GUI="false"
+INSTALL_FONTS="false"
+INSTALL_MAS="false"
 USE_PROXY="false"
 USE_CN_MIRROR="false"
 
+# --- Colors for Output ---
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+BOLD='\033[1m'
+
+# --- State Variables ---
+declare -a INSTALLED_PKGS=()
+declare -a SKIPPED_PKGS=()
+declare -a FAILED_PKGS=()
+
+# --- Utility Functions ---
+log_info() { printf "${BLUE}[INFO]${NC} %s\n" "$1"; }
+log_success() { printf "${GREEN}[SUCCESS]${NC} %s\n" "$1"; }
+log_warn() { printf "${YELLOW}[WARNING]${NC} %s\n" "$1"; }
+log_error() { printf "${RED}[ERROR]${NC} %s\n" "$1"; }
+log_step() { printf "\n${BLUE}==>${NC} ${BOLD}%s${NC}\n" "$1"; }
+
+# Check if a Homebrew package is installed
+is_installed() {
+  # brew list ignores formula vs cask if both are installed, but we can check silently
+  brew list "$1" &>/dev/null
+}
+
+# Install an array of packages
+install_packages() {
+  local type=$1    # "formula" or "cask"
+  shift
+  local pkgs=("$@")
+
+  for pkg_info in "${pkgs[@]}"; do
+    # Extract package name (ignoring inline comments)
+    local pkg
+    pkg=$(echo "$pkg_info" | awk '{print $1}')
+    
+    if [ -z "$pkg" ] || [[ "$pkg" == \#* ]]; then
+      continue # Skip empty lines and purely comment lines
+    fi
+
+    if is_installed "$pkg"; then
+      log_warn "$pkg is already installed. Skipping."
+      SKIPPED_PKGS+=("$pkg")
+    else
+      log_info "Installing $pkg..."
+      if [ "$type" == "cask" ]; then
+        if brew install --cask "$pkg"; then
+            log_success "$pkg installed successfully."
+            INSTALLED_PKGS+=("$pkg")
+        else
+            log_error "Failed to install $pkg."
+            FAILED_PKGS+=("$pkg")
+        fi
+      else
+        if brew install "$pkg"; then
+            log_success "$pkg installed successfully."
+            INSTALLED_PKGS+=("$pkg")
+        else
+            log_error "Failed to install $pkg."
+            FAILED_PKGS+=("$pkg")
+        fi
+      fi
+    fi
+  done
+}
+
 # --- Help Function ---
 usage() {
-  echo "Usage: $0 [options]"
+  printf "${BOLD}Usage:${NC} $0 [options]\n"
   echo
   echo "Options:"
   echo "  -c, --cli          Install command-line interface (CLI) tools."
   echo "  -g, --gui          Install graphical user interface (GUI) applications (casks)."
+  echo "  -f, --fonts        Install essential developer fonts (Nerd Fonts)."
+  echo "  -a, --mas          Install Mac App Store apps (requires 'mas' CLI)."
   echo "  -p, --proxy        Enable proxy (http://127.0.0.1:7890) for the session."
   echo "  -m, --mirror       Use Chinese mirror (USTC) for Homebrew."
   echo "  -h, --help         Display this help message."
   echo
-  echo "Example: To install both CLI and GUI apps using the Chinese mirror:"
-  echo "  $0 --cli --gui --mirror"
+  echo "Example: To install CLI, GUI, fonts using the Chinese mirror:"
+  echo "  $0 --cli --gui --fonts --mirror"
   exit 1
 }
 
@@ -36,59 +109,61 @@ while [[ "$#" -gt 0 ]]; do
   case $1 in
     -c|--cli) INSTALL_CLI="true"; shift ;;
     -g|--gui) INSTALL_GUI="true"; shift ;;
+    -f|--fonts) INSTALL_FONTS="true"; shift ;;
+    -a|--mas) INSTALL_MAS="true"; shift ;;
     -p|--proxy) USE_PROXY="true"; shift ;;
     -m|--mirror) USE_CN_MIRROR="true"; shift ;;
     -h|--help) usage ;;
-    *) echo "Unknown parameter passed: $1"; usage ;;
+    *) log_error "Unknown parameter passed: $1"; usage ;;
   esac
 done
 
 
 # --- Pre-flight Checks ---
-# Check for Xcode Command Line Tools
+log_step "Pre-flight Checks"
 if ! xcode-select -p &> /dev/null; then
-  echo "Xcode Command Line Tools are not installed. Please run 'xcode-select --install' and then re-run this script."
+  log_error "Xcode Command Line Tools are not installed."
+  log_info "Please run 'xcode-select --install' and then re-run this script."
   exit 1
 fi
+log_success "Xcode Command Line Tools are installed."
 
 
-# --- Execution ---
-# Apply Chinese Mirror Settings if enabled
+# --- Environment Setup ---
+log_step "Environment Setup"
 if [ "$USE_CN_MIRROR" = "true" ]; then
   export HOMEBREW_INSTALL_FROM_API=1
   export HOMEBREW_API_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles/api"
   export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.ustc.edu.cn/homebrew-bottles"
   export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.ustc.edu.cn/brew.git"
   export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.ustc.edu.cn/homebrew-core.git"
-  echo "Using Chinese mirror for Homebrew."
+  log_info "Using Chinese mirror for Homebrew."
 fi
 
-# Apply Proxy Settings if enabled
 if [ "$USE_PROXY" = "true" ]; then
   export https_proxy=http://127.0.0.1:7890
   export http_proxy=http://127.0.0.1:7890
   export all_proxy=socks5://127.0.0.1:7890
-  echo "Proxy enabled for this session."
+  log_info "Proxy enabled for this session (http://127.0.0.1:7890)."
 fi
 
 
-# Install Homebrew if not already installed
-if ! command -v brew &> /dev/null
-then
-  echo "Homebrew not found, installing..."
+# --- Homebrew Installation ---
+log_step "Homebrew Initialization"
+if ! command -v brew &> /dev/null; then
+  log_info "Homebrew not found, installing..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 else
-  echo "Homebrew is already installed"
+  log_success "Homebrew is already installed."
 fi
 
-# Update Homebrew
+log_info "Updating Homebrew..."
 brew update
 
-# Install CLI tools if requested
+
+# --- CLI Tools Installation ---
 if [ "$INSTALL_CLI" = "true" ]; then
-  echo "Installing CLI tools..."
-  
-  # Define CLI packages in an array with categories and descriptions
+  log_step "Installing CLI Tools"
   CLI_PACKAGES=(
     # --- System & Navigation ---
     autojump      # 快速目录跳转工具 / Directory navigation tool
@@ -133,15 +208,13 @@ if [ "$INSTALL_CLI" = "true" ]; then
     # --- Media & Content ---
     ffmpeg        # 音视频处理神器 / Play, record, convert, and stream audio and video
   )
-  
-  brew install "${CLI_PACKAGES[@]}"
+  install_packages "formula" "${CLI_PACKAGES[@]}"
 fi
 
-# Install GUI applications if requested
+
+# --- GUI Applications Installation ---
 if [ "$INSTALL_GUI" = "true" ]; then
-  echo "Installing GUI applications..."
-  
-  # Define GUI packages in an array with categories and descriptions
+  log_step "Installing GUI Applications"
   GUI_PACKAGES=(
     # --- Browsers & Networking ---
     google-chrome # 谷歌浏览器 / Web browser
@@ -156,7 +229,7 @@ if [ "$INSTALL_GUI" = "true" ]; then
     clion         # C/C++ 跨平台 IDE / Cross-platform C/C++ IDE
     cursor        # 整合 AI 的代码编辑器 / AI-powered code editor
     datagrip      # 数据库管理工具 / Database IDE
-    flutter       # 谷歌 UI 工具包 / Google's UI toolkit
+    # flutter       # 谷歌 UI 工具包 / Google's UI toolkit
     goland        # Go 语言 IDE / Go IDE
     intellij-idea # Java IDE
     pycharm       # Python IDE
@@ -171,7 +244,7 @@ if [ "$INSTALL_GUI" = "true" ]; then
     sourcetree    # Git 图形化客户端 / Graphical Git client
     
     # --- AI Tools & Productivity ---
-    bob           # macOS 上的划词翻译和 OCR 软件 / Translation and OCR software
+    # bob           # macOS 上的划词翻译和 OCR 软件 / Translation and OCR software
     claude        # Anthropic 的 AI 助手客户端 / Anthropic AI assistant
     feishu        # 飞书协作办公平台 / Feishu collaboration platform
     obsidian      # 本地知识库和双链笔记软件 / Knowledge base and note-taking app
@@ -190,12 +263,12 @@ if [ "$INSTALL_GUI" = "true" ]; then
     
     # --- Storage & Download ---
     adrive        # 阿里云盘客户端 / Alibaba Cloud Drive
-    baidunetdisk  # 百度网盘客端 / Baidu Netdisk
+    baidunetdisk  # 百度网盘客户端 / Baidu Netdisk
     motrix        # 全能下载工具 / Full-featured download manager
     
     # --- System Utilities & Virtualization ---
     android-platform-tools # Android 平台工具 (adb, fastboot 等) / Android SDK Platform-Tools
-    orbstack      # 轻量极速的 Docker 和 Linux 虚拟机 / Fast Docker desktop alternative
+    # orbstack      # 轻量极速的 Docker 和 Linux 虚拟机 / Fast Docker desktop alternative
     raspberry-pi-imager # 树莓派系统烧录工具 / Raspberry Pi OS imaging tool
     tencent-lemon     # 腾讯柠檬系统清理工具 / System cleaner
     vmware-fusion     # 虚拟机软件 / Virtual machine software
@@ -204,8 +277,87 @@ if [ "$INSTALL_GUI" = "true" ]; then
     battle-net    # 暴雪战网客户端 / Blizzard Battle.net desktop app
     steam         # Steam 游戏平台 / Steam game platform
   )
-  
-  brew install --cask "${GUI_PACKAGES[@]}"
+  install_packages "cask" "${GUI_PACKAGES[@]}"
 fi
 
-echo "Script finished."
+# --- Fonts Installation ---
+if [ "$INSTALL_FONTS" = "true" ]; then
+  log_step "Installing Developer Fonts"
+  log_info "Tapping Homebrew fonts..."
+  # Note: `homebrew/cask-fonts` was deprecated, fonts are now in `homebrew/cask` 
+  # but they all have the prefix `font-`
+  
+  FONT_PACKAGES=(
+    font-jetbrains-mono-nerd-font # JetBrains Mono Nerd Font 字体 / JetBrains Mono Nerd Font
+  )
+  install_packages "cask" "${FONT_PACKAGES[@]}"
+fi
+
+
+# --- Mac App Store Installation ---
+if [ "$INSTALL_MAS" = "true" ]; then
+  log_step "Installing Mac App Store (MAS) Applications"
+  if ! command -v mas &> /dev/null; then
+    log_info "Installing 'mas' CLI..."
+    brew install mas
+  fi
+  
+  # Format: "App_ID App_Name_For_Logs"
+  # You can find the App ID by searching standard web App Store URL
+  MAS_PACKAGES=(
+    "836500024 WeChat"
+    "451108668 QQ"
+    "497799835 Xcode" # Note: Xcode is huge, might take a very long time
+  )
+  
+  for mas_info in "${MAS_PACKAGES[@]}"; do
+    mas_id=$(echo "$mas_info" | awk '{print $1}')
+    mas_name=$(echo "$mas_info" | awk '{$1=""; print $0}' | sed 's/^ *//') # Rest of string
+    
+    if mas list | grep -q "^$mas_id "; then
+      log_warn "$mas_name is already installed. Skipping."
+      SKIPPED_PKGS+=("MAS: $mas_name")
+    else
+      log_info "Installing $mas_name from Mac App Store..."
+      if mas install "$mas_id"; then
+        log_success "$mas_name installed successfully."
+        INSTALLED_PKGS+=("MAS: $mas_name")
+      else
+        log_error "Failed to install $mas_name."
+        FAILED_PKGS+=("MAS: $mas_name")
+      fi
+    fi
+  done
+fi
+
+# ==============================================================================
+# Post-Installation Summary
+# ==============================================================================
+log_step "Installation Summary"
+
+printf "${GREEN}Successfully Installed (${#INSTALLED_PKGS[@]}):${NC}\n"
+if [ ${#INSTALLED_PKGS[@]} -eq 0 ]; then
+    echo "  None"
+else
+    # Print in columns
+    printf "  %-30s %-30s\n" "${INSTALLED_PKGS[@]}" | sed 's/ *$//'
+fi
+
+printf "\n${YELLOW}Skipped (Already Installed) (${#SKIPPED_PKGS[@]}):${NC}\n"
+if [ ${#SKIPPED_PKGS[@]} -eq 0 ]; then
+    echo "  None"
+else
+    printf "  %-30s %-30s\n" "${SKIPPED_PKGS[@]}" | sed 's/ *$//'
+fi
+
+if [ ${#FAILED_PKGS[@]} -gt 0 ]; then
+    printf "\n${RED}Failed to Install (${#FAILED_PKGS[@]}):${NC}\n"
+    for fail in "${FAILED_PKGS[@]}"; do
+        echo "  - $fail"
+    done
+    printf "\n${YELLOW}Please check the logs above for specific error messages regarding to failed packages.${NC}\n"
+fi
+
+log_step "Done!"
+echo "If you installed CLI tools, restart your terminal or run 'source ~/.zshrc' or equivalent."
+
